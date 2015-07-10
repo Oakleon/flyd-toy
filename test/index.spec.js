@@ -1,4 +1,5 @@
 import {assert} from 'chai';
+import * as _Flytoy from '../src/index';
 
 describe('Array', function() {
   describe('#indexOf()', function () {
