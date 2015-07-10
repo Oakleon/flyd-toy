@@ -1,33 +1,21 @@
 import flyd from 'flyd';
 import filter from 'flyd-filter';
+import takeUntil from 'flyd-takeuntil';
+import flatmap from 'flyd-flatmap';
 
-var a = flyd.stream(7);
-var b = flyd.stream(7);
-
-setInterval(()=>{
-  a(Math.floor(Math.random()*10))
-},500)
-
+var killer_queen = flyd.stream();
+var source = flyd.stream(7);
 
 setInterval(()=>{
-  b(Math.floor(Math.random()*10) + 1000)
-},1500);
+  killer_queen(1);
+}, Math.floor(Math.random()*1000) );
 
-var m = flyd.merge(a,b);
+setInterval(()=>{
+  source(2);
+},Math.floor(Math.random()*10));
 
-function over800(num) {
-    return num > 800;
-}
+var tu = takeUntil(source, killer_queen);
 
-function evens(num) {
-    return (num % 2 === 0);
-}
-
-var bigs = filter(over800, m);
-var even = filter(evens, m);
-
-var n = flyd.merge(bigs, even);
-
-flyd.on((v)=>{
-  console.log("incomming: " + v);
-}, n);
+flyd.on( (v) => {
+    console.log(v);
+}, tu);
